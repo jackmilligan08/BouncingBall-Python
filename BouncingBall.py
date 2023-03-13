@@ -3,12 +3,14 @@
 #import needed libraries   
 import turtle
 from turtle import *
+import random
 
 #Define constants
-RIGHT_EDGE= 400
-LEFT_EDGE = -400
-BOTTOM_EDGE = -400
-TOP_EDGE = 400
+#changed 400 to 300 to make it easier to test and see 
+RIGHT_EDGE= 300
+LEFT_EDGE = -300
+BOTTOM_EDGE = -300
+TOP_EDGE = 300
 
 GRAVITY = .1
 DAMPING = .8
@@ -25,7 +27,8 @@ def moveBall():
         
     y = ball.ycor()
     if yVel!=0: #if it's 0 we are not bouncing, we are rolling
-        yVel = yVel - GRAVITY   #only y is impacted by gravity
+        #changed gravity from - to + so now the ball goes up instead of down 
+        yVel = yVel + GRAVITY   #only y is impacted by gravity
         ball.sety(y + yVel)
     else:   # friction comes into play while rolling which impacts xVel
         if (xVel>0):  xVel = xVel-FRICTION
@@ -37,19 +40,23 @@ def moveBall():
             exit()
 
     #Check for collisons and reverse the direction if so
+    #if the ball hits right edge or the left edge then it changes from a color in a list from "colors2".
+    #if the ball hits the top or bottom edge then it changes from a color in a list from "colors1". 
     if (x >= RIGHT_EDGE):
         xVel *= -1
+        ball.color(random.choice(colors2))
         if xVel!=0:
             ball.setx(x + xVel-5)
 
     if (x <= LEFT_EDGE):
         xVel *= -1
+        ball.color(random.choice(colors2))
         if xVel!=0:
             ball.setx(x + xVel+5)
    
     if (y <= BOTTOM_EDGE+5):
         yVel *= -1
-        yVel = yVel * DAMPING #damping effect
+        ball.color(random.choice(colors1)) 
         if yVel>2:
             ball.sety(y + yVel+5)
         else:
@@ -57,13 +64,39 @@ def moveBall():
 
     if (y >= TOP_EDGE):
         yVel *= -1
-        ball.sety(y + yVel-5)
+        yVel = yVel * DAMPING #damping effect
+        #changed damping to top edge
+        ball.color(random.choice(colors1))
+        if yVel!=0:
+            ball.sety(y + yVel-5)
+        else:
+            yVel=0
 
-    
+
+def spacebar():
+    global RIGHT_EDGE, LEFT_EDGE, BOTTOM_EDGE, TOP_EDGE
+    if RIGHT_EDGE==300:
+        RIGHT_EDGE= 175
+        
+    if LEFT_EDGE==-300: 
+        LEFT_EDGE=-175
+        
+    if BOTTOM_EDGE==-300:
+        BOTTOM_EDGE =-175
+        
+    if TOP_EDGE==300:
+        TOP_EDGE=175
+        
+    print("space") 
+#
+
+
+#lists used to change color of the ball
+colors1 = ["chocolate", "skyblue", "yellow"]
+colors2 = ["brown","blue", "red"]
 
 #Global variables
-screen = Screen()
-screen.title("My window")
+screen = Screen() 
 screen.bgcolor("green")
 
 ball = Turtle()
@@ -87,5 +120,7 @@ screen.tracer(0) #turn off auto screen updates to make it faster
 
 while True:
     moveBall()
+    turtle.onkey(spacebar, "space") 
+    turtle.listen() 
     screen.update()
-   
+
